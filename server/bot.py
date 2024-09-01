@@ -1,5 +1,7 @@
 from dotenv import load_dotenv
 import os
+import re
+import string
 import joblib
 import pdfplumber
 from telegram import Update
@@ -40,3 +42,29 @@ def is_question_relevant(question, pdf_text, threshold=0.1):
     question_vector = vectorizer.transform([question])
     similarity = cosine_similarity(pdf_vector, question_vector)[0][0]
     return similarity > threshold
+
+
+# Function to check if the question is appropriate
+def is_question_appropriate(question):
+    # List of inappropriate words or phrases
+    inappropriate_words = ["offensive", "inappropriate", "rude", "vulgar"]
+    
+    # Check for inappropriate content
+    for word in inappropriate_words:
+        if word in question.lower():
+            return False
+    
+    return True
+
+# Function to check if the question is well-formed
+def is_question_well_formed(question):
+    # Check if the question is too short
+    if len(question.split()) < 3:
+        return False
+    
+    # Check if the question starts with a question word or is phrased as a question
+    question_words = ['what', 'when', 'where', 'who', 'why', 'how', 'can', 'could', 'would', 'should', 'is', 'are', 'do', 'does']
+    if not any(question.lower().startswith(word) for word in question_words) and '?' not in question:
+        return False
+    
+    return True
