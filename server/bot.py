@@ -68,3 +68,24 @@ def is_question_well_formed(question):
         return False
     
     return True
+
+# Function to query Gemini model for an answer
+def query_gemini_model(question, pdf_text):
+    if not is_question_relevant(question, pdf_text):
+        return "I'm sorry, but your question doesn't seem to be related to the information I have."
+
+    if not is_question_appropriate(question):
+        return "I'm sorry, but your question contains inappropriate content. "
+
+    if not is_question_well_formed(question):
+        return "Your question doesn't seem to be well-formed. "
+
+    context = f"{pdf_text}\n\n{question}"
+    response = genai.generate_text(prompt=context)
+
+    if response.result is not None and len(response.candidates) > 0:
+        answer = response.result
+    else:
+        answer = "Sorry, I couldn't find an answer best suited to your question."
+    
+    return answer
