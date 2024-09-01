@@ -1,0 +1,6 @@
+dotenv
+google-generativeai
+python-telegram-bot
+joblib
+pdfplumber
+scikit-learn
