@@ -171,3 +171,22 @@ async def handle_message(update: Update, context):
                 await update.message.reply_text(answer)
         else:
             await update.message.reply_text("Sorry, I couldn't process your request.")
+
+# Main function to run the bot
+def main():
+    print("Starting bot...")
+    global pdf_text
+    pdf_text = extract_pdf_text("pdf/Portfolio Questions.pdf") 
+
+    token = os.getenv("TELEGRAM_BOT_TOKEN")
+    application = ApplicationBuilder().token(token).build()
+
+    application.add_handler(CommandHandler("start", start))
+    application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
+
+    print("Bot is now polling for messages...")
+    application.run_polling()
+
+if __name__ == '__main__':
+    main()
+    print("Bot has stopped.")
