@@ -127,3 +127,20 @@ def cached_query_gemini_model(question, pdf_text):
 async def start(update: Update, context):
     await update.message.reply_text("Hi there! Welcome to My Portfolio Bot. 🎉")
     await update.message.reply_text("Feel free to ask me anything you want to know about Me. 🤩🤩")
+
+# Function to preprocess the user's question
+def preprocess_question(question):
+    # Remove extra whitespace
+    question = question.strip()
+    
+    # Remove trailing punctuation marks like question marks
+    if question.endswith('?'):
+        question = question[:-1]
+    
+    # Replace other special punctuation marks with spaces
+    question = re.sub(r'[{}]+'.format(re.escape(string.punctuation.replace("?", ""))), " ", question)
+    
+    # Convert to lowercase for uniformity
+    question = question.lower()
+    
+    return question
