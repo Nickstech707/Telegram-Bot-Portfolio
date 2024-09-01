@@ -144,3 +144,30 @@ def preprocess_question(question):
     question = question.lower()
     
     return question
+
+# Updated handle_message function with preprocessing
+async def handle_message(update: Update, context):
+    user_message = update.message.text
+    print(f"Received message: '{user_message}'")
+    
+    # Preprocess the user message
+    preprocessed_message = preprocess_question(user_message)
+    
+    greeting_response = handle_greeting(preprocessed_message)
+    compliment_response = handle_compliment(preprocessed_message)
+    
+    if greeting_response is not None:
+        await update.message.reply_text(greeting_response)
+    elif compliment_response is not None:
+        await update.message.reply_text(compliment_response)
+    else:
+        answer = cached_query_gemini_model(preprocessed_message, pdf_text)  
+
+        if answer is not None:
+            if len(answer) > MESSAGE_CHARACTER_LIMIT:
+                for i in range(0, len(answer), MESSAGE_CHARACTER_LIMIT):
+                    await update.message.reply_text(answer[i:i + MESSAGE_CHARACTER_LIMIT])
+            else:
+                await update.message.reply_text(answer)
+        else:
+            await update.message.reply_text("Sorry, I couldn't process your request.")
