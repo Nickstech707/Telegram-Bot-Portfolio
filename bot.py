@@ -104,7 +104,7 @@ def handle_greeting(message):
 
 # Function to handle compliments
 def handle_compliment(message):
-    compliments = ["thank you", "thanks", "great job", "well done", "good bot"]
+    compliments = ["thank you", "thanks", "great job", "well done", "good bot", "awesome", "amazing", "excellent"] 
     message = message.lower()
     for compliment in compliments:
         if compliment in message:
