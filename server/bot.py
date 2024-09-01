@@ -122,3 +122,8 @@ def cached_query_gemini_model(question, pdf_text):
         cache[question] = answer
         joblib.dump(cache, CACHE_FILE)
         return answer
+
+# Command handler for /start
+async def start(update: Update, context):
+    await update.message.reply_text("Hi there! Welcome to My Portfolio Bot. 🎉")
+    await update.message.reply_text("Feel free to ask me anything you want to know about Me. 🤩🤩")
