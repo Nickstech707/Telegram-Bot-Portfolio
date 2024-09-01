@@ -1,14 +1,15 @@
-from dotenv import load_dotenv
-import google.generativeai as genai
 import os
-from telegram import Update
-from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, filters
-import joblib
-import pdfplumber
-from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.metrics.pairwise import cosine_similarity
 import re
 import string
+import joblib
+import pdfplumber
+from telegram import Update
+from dotenv import load_dotenv
+import google.generativeai as genai
+from sklearn.metrics.pairwise import cosine_similarity
+from sklearn.feature_extraction.text import TfidfVectorizer
+from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, filters
+
 
 # Load environment variables from .env file
 load_dotenv()
