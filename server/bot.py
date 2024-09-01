@@ -1,14 +1,14 @@
 from dotenv import load_dotenv
+import google.generativeai as genai
 import os
-import re
-import string
+from telegram import Update
+from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, filters
 import joblib
 import pdfplumber
-from telegram import Update
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
-from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, filters
-import google.generativeai as genai
+import re
+import string
 
 # Load environment variables from .env file
 load_dotenv()
@@ -19,10 +19,8 @@ genai.configure(api_key=os.environ["API_KEY"])
 # Telegram message character limit
 MESSAGE_CHARACTER_LIMIT = 4096
 
-
 # Cache file path
 CACHE_FILE = "cache.joblib"
-
 
 
 # Extract text from the PDF
@@ -56,6 +54,7 @@ def is_question_appropriate(question):
     
     return True
 
+
 # Function to check if the question is well-formed
 def is_question_well_formed(question):
     # Check if the question is too short
@@ -68,6 +67,7 @@ def is_question_well_formed(question):
         return False
     
     return True
+
 
 # Function to query Gemini model for an answer
 def query_gemini_model(question, pdf_text):
@@ -90,6 +90,7 @@ def query_gemini_model(question, pdf_text):
     
     return answer
 
+
 # Function to handle greetings
 def handle_greeting(message):
     greetings = ["hi", "hello", "hey", "greetings", "good morning", "good afternoon", "good evening"]
@@ -99,6 +100,7 @@ def handle_greeting(message):
             return "Hello! Feel free to ask me anything about Me. 😊"
     return None
 
+
 # Function to handle compliments
 def handle_compliment(message):
     compliments = ["thank you", "thanks", "great job", "well done", "good bot"]
@@ -107,6 +109,7 @@ def handle_compliment(message):
         if compliment in message:
             return "You're welcome! I'm glad I could help. 😊"
     return None
+
 
 # Cached version of query_gemini_model
 def cached_query_gemini_model(question, pdf_text):
@@ -123,10 +126,13 @@ def cached_query_gemini_model(question, pdf_text):
         joblib.dump(cache, CACHE_FILE)
         return answer
 
+
 # Command handler for /start
 async def start(update: Update, context):
+   
     await update.message.reply_text("Hi there! Welcome to My Portfolio Bot. 🎉")
     await update.message.reply_text("Feel free to ask me anything you want to know about Me. 🤩🤩")
+
 
 # Function to preprocess the user's question
 def preprocess_question(question):
@@ -172,6 +178,7 @@ async def handle_message(update: Update, context):
         else:
             await update.message.reply_text("Sorry, I couldn't process your request.")
 
+
 # Main function to run the bot
 def main():
     print("Starting bot...")
@@ -190,3 +197,4 @@ def main():
 if __name__ == '__main__':
     main()
     print("Bot has stopped.")
+
