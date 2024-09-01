@@ -89,3 +89,21 @@ def query_gemini_model(question, pdf_text):
         answer = "Sorry, I couldn't find an answer best suited to your question."
     
     return answer
+
+# Function to handle greetings
+def handle_greeting(message):
+    greetings = ["hi", "hello", "hey", "greetings", "good morning", "good afternoon", "good evening"]
+    message = message.lower()
+    for greeting in greetings:
+        if greeting in message:
+            return "Hello! Feel free to ask me anything about Me. 😊"
+    return None
+
+# Function to handle compliments
+def handle_compliment(message):
+    compliments = ["thank you", "thanks", "great job", "well done", "good bot"]
+    message = message.lower()
+    for compliment in compliments:
+        if compliment in message:
+            return "You're welcome! I'm glad I could help. 😊"
+    return None
