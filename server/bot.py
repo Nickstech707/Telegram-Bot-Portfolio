@@ -107,3 +107,18 @@ def handle_compliment(message):
         if compliment in message:
             return "You're welcome! I'm glad I could help. 😊"
     return None
+
+# Cached version of query_gemini_model
+def cached_query_gemini_model(question, pdf_text):
+    try:
+        cache = joblib.load(CACHE_FILE)
+    except FileNotFoundError:
+        cache = {}
+    
+    if question in cache:
+        return cache[question]
+    else:
+        answer = query_gemini_model(question, pdf_text)
+        cache[question] = answer
+        joblib.dump(cache, CACHE_FILE)
+        return answer
