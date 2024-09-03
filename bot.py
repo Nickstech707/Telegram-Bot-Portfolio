@@ -2,7 +2,6 @@ import os
 import re
 import string
 import joblib
-import asyncio
 import pdfplumber
 from telegram import Update
 from dotenv import load_dotenv
@@ -135,7 +134,9 @@ def cached_query_gemini_model(question, pdf_text):
 # Command handler for /start
 async def start(update: Update, context):
    
-    await update.message.reply_text("Hi there! Welcome to My Portfolio Bot. 🎉")
+    await update.message.reply_text("Hi there 👋")
+    await update.message.reply_text("Welcome to My Portfolio Bot. 🎉")
+    await update.message.reply_text("I'm Nicholas a Software Engineer from Kenya.")
     await update.message.reply_text("Feel free to ask me anything you want to know about Me. 🤩🤩")
 
 
@@ -168,9 +169,6 @@ async def handle_message(update: Update, context):
 
     # Send the typing action
     await context.bot.send_chat_action(chat_id=update.effective_chat.id, action=ChatAction.TYPING)
-    
-    # Optional: Simulate typing delay
-    await asyncio.sleep(1) 
 
     if greeting_response is not None:
         await update.message.reply_text(greeting_response)
@@ -192,7 +190,6 @@ async def handle_message(update: Update, context):
             await update.message.reply_text("Sorry, the request is taking too long. Please try again later.")
         except Exception as e:
             await update.message.reply_text(f"An unexpected error occurred: {str(e)}")
-
 
 
 # Main function to run the bot
