@@ -2,13 +2,17 @@ import os
 import re
 import string
 import joblib
+import asyncio
 import pdfplumber
 from telegram import Update
 from dotenv import load_dotenv
+import google.api_core.exceptions
 import google.generativeai as genai
+from telegram.constants import ChatAction
 from sklearn.metrics.pairwise import cosine_similarity
 from sklearn.feature_extraction.text import TfidfVectorizer
 from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, filters
+
 
 
 # Load environment variables from .env file
@@ -152,32 +156,43 @@ def preprocess_question(question):
     
     return question
 
-# Updated handle_message function with preprocessing
 async def handle_message(update: Update, context):
     user_message = update.message.text
     print(f"Received message: '{user_message}'")
-    
+
     # Preprocess the user message
     preprocessed_message = preprocess_question(user_message)
-    
+
     greeting_response = handle_greeting(preprocessed_message)
     compliment_response = handle_compliment(preprocessed_message)
+
+    # Send the typing action
+    await context.bot.send_chat_action(chat_id=update.effective_chat.id, action=ChatAction.TYPING)
     
+    # Optional: Simulate typing delay
+    await asyncio.sleep(1) 
+
     if greeting_response is not None:
         await update.message.reply_text(greeting_response)
     elif compliment_response is not None:
         await update.message.reply_text(compliment_response)
     else:
-        answer = cached_query_gemini_model(preprocessed_message, pdf_text)  
+        try:
+            answer = cached_query_gemini_model(preprocessed_message, pdf_text)
 
-        if answer is not None:
-            if len(answer) > MESSAGE_CHARACTER_LIMIT:
-                for i in range(0, len(answer), MESSAGE_CHARACTER_LIMIT):
-                    await update.message.reply_text(answer[i:i + MESSAGE_CHARACTER_LIMIT])
+            if answer is not None:
+                if len(answer) > MESSAGE_CHARACTER_LIMIT:
+                    for i in range(0, len(answer), MESSAGE_CHARACTER_LIMIT):
+                        await update.message.reply_text(answer[i:i + MESSAGE_CHARACTER_LIMIT])
+                else:
+                    await update.message.reply_text(answer)
             else:
-                await update.message.reply_text(answer)
-        else:
-            await update.message.reply_text("Sorry, I couldn't process your request.")
+                await update.message.reply_text("Sorry, I couldn't process your request.")
+        except google.api_core.exceptions.DeadlineExceeded:
+            await update.message.reply_text("Sorry, the request is taking too long. Please try again later.")
+        except Exception as e:
+            await update.message.reply_text(f"An unexpected error occurred: {str(e)}")
+
 
 
 # Main function to run the bot
